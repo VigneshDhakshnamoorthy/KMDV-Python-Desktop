@@ -1,6 +1,5 @@
 from pywinauto.application import Application, WindowSpecification
 from pywinauto.keyboard import send_keys
-import time
 
 app: Application = Application().start("notepad.exe")
 notepad: WindowSpecification = app.UntitledNotepad

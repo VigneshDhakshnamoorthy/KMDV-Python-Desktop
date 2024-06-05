@@ -36,7 +36,6 @@ save_changes_window: WindowSpecification = notpad.child_window(title="Notepad")
 cancel_save_changes_button: WindowSpecification = save_changes_window.child_window(title="Cancel", control_type="Button")
 cancel_save_changes_button.click()
 
-notpad.print_control_identifiers()
 
 scroll_bar = notpad.Edit.child_window(title="Vertical", control_type="ScrollBar")
 scroll_bar_rect = scroll_bar.rectangle()
@@ -56,12 +55,15 @@ def drag_scroll_bar(scroll_bar_rect, direction="down", distance=100) -> None:
     move(coords=(start_x, end_y))
     release(button="left", coords=(start_x, end_y))
 
+time.sleep(2)
 # Drag the scroll bar down
-drag_scroll_bar(scroll_bar_rect, direction="down", distance=500)
+drag_scroll_bar(scroll_bar_rect, direction="up", distance=5000)
 
+time.sleep(2)
 # Drag the scroll bar up
-drag_scroll_bar(scroll_bar_rect, direction="up", distance=100)
-time.sleep(5)
+drag_scroll_bar(scroll_bar_rect, direction="down", distance=1000)
+
+time.sleep(2)
 
 notpad.menu_select("File -> Exit")
 

@@ -1,12 +1,15 @@
+import time
 from pywinauto.application import Application, WindowSpecification
+from pywinauto.keyboard import send_keys
+from pywinauto.mouse import move, press, release
 
 app: Application = Application(backend="uia").start('notepad.exe')
 
 notpad: WindowSpecification = app.UntitledNotepad
-notpad.type_keys("Hello World !!!", with_spaces=True)
+notpad.type_keys("Hello World !!!"+"{ENTER}0"*50, with_spaces=True)
 notpad.print_control_identifiers()
 
-edit_button: WindowSpecification = notpad.menu_select("Edit -> Replace")
+notpad.menu_select("Edit -> Replace")
 replace: WindowSpecification = notpad.Replace
 find_what: WindowSpecification = replace.child_window(title="Find what:", control_type="Edit")
 find_what.type_keys('^a{DEL}')
@@ -30,6 +33,37 @@ close_button.click()
 
 save_changes_window: WindowSpecification = notpad.child_window(title="Notepad")  
 
+cancel_save_changes_button: WindowSpecification = save_changes_window.child_window(title="Cancel", control_type="Button")
+cancel_save_changes_button.click()
+
+notpad.print_control_identifiers()
+
+scroll_bar = notpad.Edit.child_window(title="Vertical", control_type="ScrollBar")
+scroll_bar_rect = scroll_bar.rectangle()
+
+# Function to click and drag the scroll bar
+def drag_scroll_bar(scroll_bar_rect, direction="down", distance=100) -> None:
+    if direction == "down":
+        start_y = scroll_bar_rect.top + 10
+        end_y = start_y + distance
+    else:
+        start_y = scroll_bar_rect.bottom - 10
+        end_y = start_y - distance
+
+    start_x = (scroll_bar_rect.left + scroll_bar_rect.right) // 2
+    move(coords=(start_x, start_y))
+    press(button="left", coords=(start_x, start_y))
+    move(coords=(start_x, end_y))
+    release(button="left", coords=(start_x, end_y))
+
+# Drag the scroll bar down
+drag_scroll_bar(scroll_bar_rect, direction="down", distance=500)
+
+# Drag the scroll bar up
+drag_scroll_bar(scroll_bar_rect, direction="up", distance=100)
+time.sleep(5)
+
+notpad.menu_select("File -> Exit")
+
 dont_save_changes_button: WindowSpecification = save_changes_window.child_window(title="Don't Save", control_type="Button")
 dont_save_changes_button.click()
-
